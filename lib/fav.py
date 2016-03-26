@@ -5,10 +5,13 @@ import requests
 import os
 import hashlib
 import binascii
+import time
 
 from Evernote import EvernoteMethod
 import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
+from sqs import zhihufav_sqs
+from db_conn import session, CollectionQueue
 
 class Fav():
     def __init__(self, url):
@@ -24,6 +27,8 @@ class Fav():
 
     def get_content(self):
         r = requests.get(self.url, headers=self.headers)
+        print self.url
+        print r.text
         res_json = r.json()
         content = res_json.get('content', '')
         soup = BeautifulSoup(content, "html5lib")
@@ -41,6 +46,11 @@ class Fav():
         print("title %s" % title)
         html_content = str(soup)
         EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res)
+        find_queue = session.query(CollectionQueue).filter(CollectionQueue.api_url == self.url).first()
+        if find_queue:
+            find_queue.is_collected = 1
+            find_queue.collected_time = int(time.time())
+            session.commit()
 
 
 
