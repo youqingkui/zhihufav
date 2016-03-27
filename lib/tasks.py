@@ -13,6 +13,6 @@ def add(x, y):
 
 
 @app.task
-def add_note(url):
-    fav_note = Fav(url)
+def add_note(url, parent_note, receipt_handle):
+    fav_note = Fav(url, parent_note, receipt_handle)
     fav_note.get_content()

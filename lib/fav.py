@@ -12,13 +12,15 @@ import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
 from sqs import zhihufav_sqs
 from db_conn import session, CollectionQueue
-
+from sqs import zhihufav_sqs, sqs_conn
 class Fav():
-    def __init__(self, url):
+    def __init__(self, url, parent_note, receipt_handle):
 
         self.url = url
+        self.parent_note = parent_note
         self.dev_token = os.environ.get('DeveloperToken')
         self.noteStore = EvernoteMethod.getNoteStore(self.dev_token)
+        self.receipt_handle = receipt_handle
         self.headers = {'User-Agent':'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
            'Authorization':'oauth 5774b305d2ae4469a2c9258956ea49',
            'Content-Type':'application/json'}
@@ -45,12 +47,15 @@ class Fav():
         print("note_url %s" % note_url)
         print("title %s" % title)
         html_content = str(soup)
-        EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res)
+        EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
         find_queue = session.query(CollectionQueue).filter(CollectionQueue.api_url == self.url).first()
         if find_queue:
             find_queue.is_collected = 1
             find_queue.collected_time = int(time.time())
             session.commit()
+
+            sqs_conn.delete_message_from_handle(zhihufav_sqs, self.receipt_handle)
+
 
 
 

@@ -10,7 +10,7 @@ from db_conn import session, CollectionQueue
 
 
 class CheckList():
-    def __init__(self, check_num, fav_url):
+    def __init__(self, check_num, fav_url, parent_note):
         self.check_num = check_num
         self.headers = {
             'User-Agent': 'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
@@ -18,6 +18,7 @@ class CheckList():
             'Content-Type': 'application/json',
         }
         self.fav_url = fav_url
+        self.parent_note = parent_note
 
 
 
@@ -47,7 +48,8 @@ class CheckList():
                     session.commit()
 
                     sqs_body = {
-                        'api_url':url
+                        'api_url':url,
+                        'parent_note':self.parent_note
                     }
                     m = Message()
                     m.set_body(json.dumps(sqs_body))
@@ -61,7 +63,7 @@ class CheckList():
 
 
 
-c = CheckList(10, 'https://api.zhihu.com/collections/29469118/answers')
+c = CheckList(10, 'https://api.zhihu.com/collections/29469118/answers', '735b3e76-e7f5-462c-84d0-bb1109bcd7dd')
 c.get_list()
 
 

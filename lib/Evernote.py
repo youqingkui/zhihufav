@@ -33,8 +33,12 @@ class EvernoteMethod():
             ourNote.attributes = note_attrs
 
         ## parentNotebook is optional; if omitted, default notebook is used
-        if parentNotebook and hasattr(parentNotebook, 'guid'):
-            ourNote.notebookGuid = parentNotebook.guid
+        # if parentNotebook and hasattr(parentNotebook, 'guid'):
+        #     ourNote.notebookGuid = parentNotebook.guid
+
+        if parentNotebook:
+            ourNote.notebookGuid = parentNotebook
+
 
         ## Attempt to create note in Evernote account
         note = noteStore.createNote(ourNote)
