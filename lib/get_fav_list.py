@@ -61,10 +61,9 @@ class CheckList():
 
 
 
-
-
-c = CheckList(10, 'https://api.zhihu.com/collections/29469118/answers', '735b3e76-e7f5-462c-84d0-bb1109bcd7dd')
-c.get_list()
+if __name__ == '__main__':
+    c = CheckList(10, 'https://api.zhihu.com/collections/29469118/answers', '735b3e76-e7f5-462c-84d0-bb1109bcd7dd')
+    c.get_list()
 
 
 
