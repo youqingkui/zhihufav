@@ -10,8 +10,8 @@ from db_conn import session, CollectionQueue
 
 
 class CheckList():
-    def __init__(self, check_num, fav_url, parent_note):
-        self.check_num = check_num
+    def __init__(self, fav_url, parent_note, check_page=1):
+        self.check_page = check_page
         self.headers = {
             'User-Agent': 'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
             'Authorization': 'oauth 5774b305d2ae4469a2c9258956ea49',
@@ -58,11 +58,17 @@ class CheckList():
                 else:
                     print("[Find Queue] %s" % url)
 
+        self.check_page = self.check_page - 1
+        if len(data_list) > 0 and self.check_page > 0:
+            print("start next url %s" % next_url)
+            self.fav_url = next_url
+            self.get_list()
+
 
 
 
 if __name__ == '__main__':
-    c = CheckList(10, 'https://api.zhihu.com/collections/29469118/answers', '735b3e76-e7f5-462c-84d0-bb1109bcd7dd')
+    c = CheckList('https://api.zhihu.com/collections/29469118/answers', '735b3e76-e7f5-462c-84d0-bb1109bcd7dd', 10)
     c.get_list()
 
 
