@@ -25,10 +25,10 @@ class CheckList():
 
     def get_list(self):
         r = s.get(self.fav_url, headers=self.headers)
-        print r.content
-        print r.headers
-        print r.url
-        print r.status_code
+        # print r.content
+        # print r.headers
+        # print r.url
+        # print r.status_code
         res_json = r.json()
         paging = res_json.get('paging', {})
         next_url = paging.get('next', '')
