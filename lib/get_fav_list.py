@@ -7,11 +7,12 @@ from sqs import zhihufav_sqs
 from db_conn import session, CollectionQueue
 
 
-
+s = requests.session()
 
 class CheckList():
-    def __init__(self, fav_url, parent_note, check_page=1):
+    def __init__(self, fav_url, parent_note, check_page=1, force=False):
         self.check_page = check_page
+        self.force = force
         self.headers = {
             'User-Agent': 'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
             'Authorization': 'oauth 5774b305d2ae4469a2c9258956ea49',
@@ -23,7 +24,11 @@ class CheckList():
 
 
     def get_list(self):
-        r = requests.get(self.fav_url, headers=self.headers)
+        r = s.get(self.fav_url, headers=self.headers)
+        print r.content
+        print r.headers
+        print r.url
+        print r.status_code
         res_json = r.json()
         paging = res_json.get('paging', {})
         next_url = paging.get('next', '')
@@ -58,11 +63,17 @@ class CheckList():
                 else:
                     print("[Find Queue] %s" % url)
 
-        self.check_page = self.check_page - 1
-        if len(data_list) > 0 and self.check_page > 0:
-            print("start next url %s" % next_url)
+
+        if len(data_list):
+            self.check_page = self.check_page - 1
             self.fav_url = next_url
-            self.get_list()
+            if self.force:
+                print("force next url %s" % next_url)
+                self.get_list()
+
+            elif self.check_page > 0:
+                print("start next url %s" % next_url)
+                self.get_list()
 
 
 
