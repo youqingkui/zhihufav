@@ -10,16 +10,18 @@ import time
 from Evernote import EvernoteMethod
 import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
-from sqs import zhihufav_sqs
 from db_conn import session, CollectionQueue
 from sqs import zhihufav_sqs, sqs_conn
+from note_store import noteStore
+
 class Fav():
     def __init__(self, url, parent_note, receipt_handle):
 
         self.url = url
         self.parent_note = parent_note
         self.dev_token = os.environ.get('DeveloperToken')
-        self.noteStore = EvernoteMethod.getNoteStore(self.dev_token)
+        # self.noteStore = EvernoteMethod.getNoteStore(self.dev_token)
+        self.noteStore = noteStore
         self.receipt_handle = receipt_handle
         self.headers = {'User-Agent':'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
            'Authorization':'oauth 5774b305d2ae4469a2c9258956ea49',
@@ -53,6 +55,7 @@ class Fav():
             find_queue.is_collected = 1
             find_queue.collected_time = int(time.time())
             session.commit()
+            session.close()
 
             sqs_conn.delete_message_from_handle(zhihufav_sqs, self.receipt_handle)
 

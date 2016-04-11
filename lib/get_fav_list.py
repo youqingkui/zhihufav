@@ -51,6 +51,7 @@ class CheckList():
                     cq.add_time = int(time.time())
                     session.add(cq)
                     session.commit()
+                    session.close()
 
                     sqs_body = {
                         'api_url':url,
