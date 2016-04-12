@@ -10,7 +10,7 @@ import time
 from Evernote import EvernoteMethod
 import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
-from db_conn import session, CollectionQueue
+from db_conn import CollectionQueue, create_session
 from sqs import zhihufav_sqs, sqs_conn
 from note_store import noteStore
 
@@ -50,14 +50,17 @@ class Fav():
         print("title %s" % title)
         html_content = str(soup)
         EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
+
+        session = create_session()
         find_queue = session.query(CollectionQueue).filter(CollectionQueue.api_url == self.url).first()
         if find_queue:
             find_queue.is_collected = 1
             find_queue.collected_time = int(time.time())
             session.commit()
-            session.close()
 
             sqs_conn.delete_message_from_handle(zhihufav_sqs, self.receipt_handle)
+
+        session.close()
 
 
 

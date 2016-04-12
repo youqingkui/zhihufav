@@ -71,6 +71,13 @@ def add_fav(fav_id, note_book, title=''):
     print "add ok fav_id:%s, note_book:%s, title:%s" % (fav_id, note_book, title)
 
 
+def create_session():
+    DB_CONNECT_STRING = os.getenv('zhihufav_db')
+    engine      = create_engine(DB_CONNECT_STRING, echo=False)
+    DB_Session  = sessionmaker(bind=engine, autoflush=False)
+    session = DB_Session()
+    return session
+
 
 if __name__ == '__main__':
     print session.close()
