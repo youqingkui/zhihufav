@@ -5,12 +5,13 @@ import requests, time, json
 from boto.sqs.message import Message
 from sqs import zhihufav_sqs
 from db_conn import session, CollectionQueue
+from instapush_notify import InstaPushNotify
 
 
 s = requests.session()
 
 class CheckList():
-    def __init__(self, fav_url, parent_note, check_page=1, force=False):
+    def __init__(self, fav_url, parent_note, check_page=1, title='', force=False):
         self.check_page = check_page
         self.force = force
         self.headers = {
@@ -19,7 +20,9 @@ class CheckList():
             'Content-Type': 'application/json',
         }
         self.fav_url = fav_url
+        self.title = title
         self.parent_note = parent_note
+        self.check_num = 0
 
 
 
@@ -42,6 +45,7 @@ class CheckList():
             if title and id > 0 and url:
                 find_queue = session.query(CollectionQueue).filter(CollectionQueue.answer_id == id).first()
                 if not find_queue:
+                    self.check_num += 1
                     web_url = 'http://www.zhihu.com/question/20070065/answer/%s' % id
                     cq = CollectionQueue()
                     cq.title = title
@@ -70,13 +74,17 @@ class CheckList():
             self.fav_url = next_url
             if self.force:
                 print("force next url %s" % next_url)
-                self.get_list()
+                return self.get_list()
 
             elif self.check_page > 0:
                 print("start next url %s" % next_url)
-                self.get_list()
+                return self.get_list()
 
 
+        title = self.title
+        num = self.check_num
+        if num > 0:
+            InstaPushNotify.notify(title, str(num))
 
 
 if __name__ == '__main__':

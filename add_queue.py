@@ -10,7 +10,7 @@ if __name__ == '__main__':
     for fav in fav_list:
         print fav.api_url
         check_num = int(random.random() * 10 + 1)
-        c = CheckList(fav.api_url, fav.note_book, force=True)
+        c = CheckList(fav.api_url, fav.note_book, title=fav.title, force=True)
         # c = CheckList('https://api.zhihu.com/collections/20094118/answers', '0bf179b6-f351-4448-8421-c258f331825a', force=True)
         # c = CheckList('https://api.zhihu.com/collections/20171047/answers', '16e4228e-88ef-4cca-9968-891481cf11c9', force=True)
 
