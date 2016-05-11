@@ -46,6 +46,10 @@ class Fav():
         id    = res_json.get('id', '')
         note_url = 'http://www.zhihu.com/question/%s/answer/%s' % (question_id, id)
         res = self.change_img(soup)
+        title_list = title.split('\n')
+        title = ''
+        for t in title_list:
+            title += t
         print("note_url %s" % note_url)
         print("title %s" % title)
         html_content = str(soup)
