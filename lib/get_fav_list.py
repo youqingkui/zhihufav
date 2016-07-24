@@ -11,7 +11,7 @@ from instapush_notify import InstaPushNotify
 s = requests.session()
 
 class CheckList():
-    def __init__(self, fav_url, parent_note, check_page=1, title='', force=False):
+    def __init__(self, fav_url, parent_note, fav_id='', check_page=1, title='', force=False):
         self.check_page = check_page
         self.force = force
         self.headers = {
@@ -23,6 +23,7 @@ class CheckList():
         self.title = title
         self.parent_note = parent_note
         self.check_num = 0
+        self.fav_id = fav_id
 
 
 
@@ -48,6 +49,7 @@ class CheckList():
                     self.check_num += 1
                     web_url = 'http://www.zhihu.com/question/20070065/answer/%s' % id
                     cq = CollectionQueue()
+                    cq.fav_id = self.fav_id
                     cq.title = title
                     cq.api_url = url
                     cq.web_url = web_url
@@ -59,13 +61,17 @@ class CheckList():
 
                     sqs_body = {
                         'api_url':url,
-                        'parent_note':self.parent_note
+                        'parent_note':self.parent_note,
+                        'answer_id':cq.answer_id
                     }
                     m = Message()
                     m.set_body(json.dumps(sqs_body))
                     zhihufav_sqs.write(m)
 
                 else:
+                    if find_queue.fav_id == 0:
+                        find_queue.fav_id = self.fav_id
+                        session.commit()
                     print("[Find Queue] %s" % url)
 
 

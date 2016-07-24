@@ -31,8 +31,8 @@ class Fav():
 
     def get_content(self):
         r = requests.get(self.url, headers=self.headers)
-        print self.url
-        print r.text
+        print(self.url)
+        print(r.text)
         res_json = r.json()
         content = res_json.get('content', '')
         soup = BeautifulSoup(content, "html5lib")
@@ -53,13 +53,13 @@ class Fav():
         print("note_url %s" % note_url)
         print("title %s" % title)
         html_content = str(soup)
-        EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
-
+        res = EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
         session = create_session()
         find_queue = session.query(CollectionQueue).filter(CollectionQueue.api_url == self.url).first()
         if find_queue:
             find_queue.is_collected = 1
             find_queue.collected_time = int(time.time())
+            find_queue.note_guid = res.guid
             session.commit()
 
             sqs_conn.delete_message_from_handle(zhihufav_sqs, self.receipt_handle)
