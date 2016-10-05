@@ -3,16 +3,16 @@
 
 import requests
 import os
-import hashlib
 import binascii
-import time
-
 from Evernote import EvernoteMethod
-import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
-from db_conn import CollectionQueue, create_session
-from sqs import zhihufav_sqs, sqs_conn
 from note_store import noteStore
+from logger_fun import logger
+# import hashlib
+# from db_conn import CollectionQueue, create_session
+# from sqs import zhihufav_sqs, sqs_conn
+# import evernote.edam.type.ttypes as Types
+# import time
 
 class Fav():
     def __init__(self, url, parent_note, receipt_handle):
@@ -30,9 +30,9 @@ class Fav():
 
 
     def get_content(self):
+        logger.info("get_content url %s" % self.url)
         r = requests.get(self.url, headers=self.headers)
-        print(self.url)
-        print(r.text)
+        logger.info("get_content res %s " % r.text)
         res_json = r.json()
         content = res_json.get('content', '')
         soup = BeautifulSoup(content, "html5lib")
@@ -41,30 +41,19 @@ class Fav():
         soup.head.unwrap()
         soup.body.unwrap()
 
-        title = res_json.get('question', {}).get('title', '')
-        question_id = res_json.get('question', {}).get('id', '')
+        title = res_json.get('title', '')
+        # question_id = res_json.get('question', {}).get('id', '')
         id    = res_json.get('id', '')
-        note_url = 'http://www.zhihu.com/question/%s/answer/%s' % (question_id, id)
+        note_url = 'https://zhuanlan.zhihu.com/p/%s' % (id)
         res = self.change_img(soup)
         title_list = title.split('\n')
         title = ''
         for t in title_list:
             title += t
-        print("note_url %s" % note_url)
-        print("title %s" % title)
+        logger.info("note_url %s" % note_url)
+        logger.info("title %s" % title)
         html_content = str(soup)
         res = EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
-        session = create_session()
-        find_queue = session.query(CollectionQueue).filter(CollectionQueue.api_url == self.url).first()
-        if find_queue:
-            find_queue.is_collected = 1
-            find_queue.collected_time = int(time.time())
-            find_queue.note_guid = res.guid
-            session.commit()
-
-            sqs_conn.delete_message_from_handle(zhihufav_sqs, self.receipt_handle)
-
-        session.close()
 
 
 

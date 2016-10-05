@@ -5,6 +5,7 @@ import requests
 import hashlib
 import evernote.edam.type.ttypes as Types
 from evernote.api.client import EvernoteClient
+from logger_fun import logger
 
 
 
@@ -18,7 +19,7 @@ class EvernoteMethod():
         nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
         nBody += "<en-note>" + noteBody +  "</en-note>"
-        print(nBody)
+        logger.info(nBody)
         ## Create note object
         ourNote = Types.Note()
         ourNote.title = noteTitle

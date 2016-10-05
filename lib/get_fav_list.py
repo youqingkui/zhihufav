@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import requests, time, json
+import requests, time, json, os
 from boto.sqs.message import Message
 from sqs import zhihufav_sqs
 from db_conn import session, CollectionQueue
@@ -16,7 +16,7 @@ class CheckList():
         self.force = force
         self.headers = {
             'User-Agent': 'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
-            'Authorization': 'oauth 5774b305d2ae4469a2c9258956ea49',
+            'Authorization': os.environ.get('Authorization'),
             'Content-Type': 'application/json',
         }
         self.fav_url = fav_url
