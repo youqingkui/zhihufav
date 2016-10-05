@@ -8,8 +8,8 @@ def get_logger():
     logger = logging.getLogger("threading_example")
     logger.setLevel(logging.DEBUG)
     date_info = time.strftime('%Y-%m-%d')
-    # fh = logging.FileHandler("/data/www/logs/zhuanlan.log.%s" % date_info)
-    fh = logging.FileHandler("/Users/youqingkui/PycharmProjects/zhihufav/zhuanlan.log.%s" % date_info)
+    fh = logging.FileHandler("/data/www/logs/zhuanlan.log.%s" % date_info)
+    # fh = logging.FileHandler("/Users/youqingkui/PycharmProjects/zhihufav/zhuanlan.log.%s" % date_info)
     fmt = '%(asctime)s|%(threadName)s|%(levelname)s| %(message)s'
     formatter = logging.Formatter(fmt)
     fh.setFormatter(formatter)
