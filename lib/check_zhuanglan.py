@@ -19,6 +19,10 @@ class CheckZhuanLanFav(object):
             'User-Agent': 'osee2unifiedRelease/332 CFNetwork/711.3.18 Darwin/14.0.0',
             'Authorization': os.environ.get('Authorization'),
             'Content-Type': 'application/json',
+            'x-api-version': "3.0.42",
+            'accept-language': "zh-Hans-CN;q=1, en-US;q=0.9",
+            'accept': "*/*",
+            'accept-encoding': "gzip, deflate"
         }
         self.force_check = True if random.randint(0, 9) > 7 else False
 
