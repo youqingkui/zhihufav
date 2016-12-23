@@ -76,7 +76,7 @@ if __name__ == '__main__':
     except Exception, e:
         logger.error(Exception)
         logger.error(e)
-        InstaPushNotify("error", type_info=2)
+        InstaPushNotify.notify("error", type_info=2)
 
 
 
