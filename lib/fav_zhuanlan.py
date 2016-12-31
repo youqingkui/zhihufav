@@ -8,11 +8,6 @@ from Evernote import EvernoteMethod
 from bs4 import BeautifulSoup
 from note_store import noteStore
 from logger_fun import logger
-# import hashlib
-# from db_conn import CollectionQueue, create_session
-# from sqs import zhihufav_sqs, sqs_conn
-# import evernote.edam.type.ttypes as Types
-# import time
 
 class Fav():
     def __init__(self, url, parent_note, receipt_handle):
@@ -50,13 +45,13 @@ class Fav():
         title = ''
         for t in title_list:
             title += t
+        # remove \b
+        title = title.replace('\b', '')
         logger.info("note_url %s" % note_url)
         logger.info("title %s" % title)
         html_content = str(soup)
-        res = EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'), html_content, note_url, res, self.parent_note)
-
-
-
+        res = EvernoteMethod.makeNote(self.noteStore, title.encode('utf8'),
+                                html_content, note_url, res, self.parent_note)
 
     def remove_attrs(self, tag):
         attrs = tag.attrs
