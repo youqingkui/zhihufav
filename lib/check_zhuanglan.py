@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #coding=utf-8
 
+print("are you ok?? 11")
+
 import requests
 import redis
 import os
