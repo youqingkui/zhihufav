@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-print("are you ok?? 11")
-
 import requests
 import redis
 import os
@@ -10,7 +8,6 @@ import random
 from instapush_notify import InstaPushNotify
 from fav_zhuanlan import Fav
 from logger_fun import logger
-print("are you ok??")
 s = requests.session()
 redis_obj = redis.Redis(host='localhost', port=6379, db=0)
 
