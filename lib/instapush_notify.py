@@ -7,8 +7,6 @@ from instapush import Instapush, App
 
 class InstaPushNotify():
 
-
-
     @staticmethod
     def notify(title, check_num=0, type_info=1):
         app = App(appid=os.getenv('instapush_id'), secret=os.getenv('instapush_secret'))
